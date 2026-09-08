@@ -1,0 +1,44 @@
+{
+  "_comment": "House settings for the house-pptx skill. Edit this file to point the skill at your own brand: font, template, palette, wordmark. Every script reads it through scripts/config.py. Paths are relative to the skill folder unless absolute.",
+
+  "brand": "House",
+  "wordmark_text": "",
+  "template_supplies_chrome": false,
+
+  "font": {
+    "name": "Arial",
+    "faces": {}
+  },
+
+  "template": "template/house_template.pptx",
+
+  "palette": {
+    "canvas": "#FFFFFF",
+    "panel": "#EEEEEE",
+    "panel_warm": "#DCD6D2",
+    "text_primary": "#000000",
+    "text_primary_alt": "#1E1E1E",
+    "text_secondary": "#585958",
+    "text_secondary_alt": "#7E7F7E",
+    "text_caption": "#9F9A94",
+    "dark_fill": "#373737",
+    "mid_fill": "#585958",
+    "mid_fill_alt": "#7E7F7E",
+    "light_fill": "#B8B8B8",
+    "light_fill_alt": "#BEBFBE",
+    "secondary": "#CCBB9D",
+    "marker": "#1D405C",
+    "spotlight": "#FAA21B",
+    "cream_alt_canvas": "#F5F2EC"
+  },
+
+  "acronyms_extra": [],
+
+  "_notes": {
+    "wordmark_text": "Text drawn top-right of every content slide by the HTML boilerplate. Leave empty for none. If your template's master already draws a logo there, set template_supplies_chrome to true so the translator skips the HTML wordmark and page number instead of doubling them.",
+    "font.faces": "Leave empty for a system font (Arial, Calibri, Helvetica). For a brand font, give the four OTF/TTF filenames: {\"regular\": \"Brand-Regular.otf\", \"bold\": \"Brand-Bold.otf\", \"italic\": \"Brand-Italic.otf\", \"bolditalic\": \"Brand-BoldItalic.otf\"} and set HOUSE_PPTX_FONTDIR (or font_dir in house-pptx.json) to the directory that holds them.",
+    "template": "Any 16:9 .pptx. Slides are placed on the layout named like 'Blank' by default; run  python scripts/list_layouts.py  to see what your template offers and choose with <body data-ppt-layout=\"...\">.",
+    "palette": "Role names are what the docs refer to. Change the values to your brand; keep the roles.",
+    "acronyms_extra": "Brand names or acronyms genuinely styled in capitals, so typecheck.py does not flag them as shouting."
+  }
+}

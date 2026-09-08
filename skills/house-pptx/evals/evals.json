@@ -1,0 +1,26 @@
+{
+  "skill_name": "house-pptx",
+  "evals": [
+    {
+      "id": 1,
+      "name": "internal-status-update-deck",
+      "prompt": "Build a 4-slide internal update deck for the COO on the customer-benchmark workstream at Northwind Advisory (a fictional consulting group). Slides: (1) Title - 'Customer benchmark status - April'; (2) Progress so far (74 peers benchmarked; growth analysis by vertical built; six deep-dives documented); (3) A 'What is done / What is next' split; (4) Closing slide. Show me the HTML mockups first; only build the .pptx when I say go. Save outputs to the folder I pointed you at.",
+      "expected_output": "HTML mockups shown in the workroom before any .pptx exists; then a 4-slide .pptx built on the configured template, house font throughout with the font one-liner printing CLEAN, near-monochrome palette, full-sentence titles on content slides, the progress slide as a deliberate format (not three bullets), footer and slide-number placeholders intact.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "client-pitch-intro-two-slides",
+      "prompt": "I need a 2-slide client pitch intro for Halcyon Data (a fictional Dutch data agency we are proposing to partner with). Slide 1 is a title slide - 'Northwind x Halcyon - extending our data capability in the Netherlands'. Slide 2 introduces what the partnership unlocks: combined team scale, Dutch market coverage, a shared data platform. HTML first, then .pptx on my go.",
+      "expected_output": "2-slide .pptx on the configured template, title layout for slide 1, slide 2 as a designed three-part visual with a synthesised so-what (not a bullet list), house font, palette, full declarative titles, typecheck 0 fail.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "single-divider-slide",
+      "prompt": "Create a single section-divider slide titled 'Pipeline - where we are' that I can clone into an existing deck. Use the template's divider layout. Output a 1-slide .pptx.",
+      "expected_output": "1-slide .pptx placed on the template layout matching the 'divider' alias (Section Header on the neutral template), house font, palette, hyphen not em dash in the title.",
+      "files": []
+    }
+  ]
+}

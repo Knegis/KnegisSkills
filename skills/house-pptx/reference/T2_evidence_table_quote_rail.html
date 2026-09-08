@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>House exemplar - evidence table + quote rail</title>
+<style>
+/* font: Arial is a system font, so no @font-face block is needed. For a brand font, paste the
+   output of  python -c "import sys;sys.path.insert(0,'scripts');import config;print(config.font_face_css())"  here. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:1280px;height:720px;font-family:'Arial',Arial,sans-serif;background:#fff;}
+
+/* canvas: 24px margins -> 1232px content, filled to ~690px  (house_style.md sections 1-2) */
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;background:#FFFFFF;color:#1E1E1E;}
+.title{position:absolute;left:24px;top:24px;width:1160px;font-size:34px;font-weight:700;line-height:1.16;}
+.subtitle{position:absolute;left:24px;top:112px;width:1160px;font-size:17px;font-style:italic;color:#585958;}
+
+/* ---- left exhibit: evidence-row table ---- */
+.exhibit{position:absolute;left:24px;top:160px;width:896px;height:496px;display:flex;flex-direction:column;}
+.legend{position:absolute;left:470px;top:138px;width:450px;height:16px;font-size:11.5px;color:#585958;}
+.legend .sw{position:absolute;top:2px;width:11px;height:11px;}
+.legend .kl{position:absolute;top:0;line-height:16px;}
+.sw.p{background:#373737;} .sw.s{background:#B8B8B8;} .sw.d{background:#DCD6D2;}
+
+.hrow{display:flex;align-items:flex-end;font-size:14px;font-weight:700;padding-bottom:7px;}
+.hrule{height:1.5px;background:#1E1E1E;flex:0 0 auto;}
+.row{flex:1;display:flex;align-items:center;font-size:14px;}
+.rrule{height:1px;background:#E4E4E4;flex:0 0 auto;}
+.row.total{background:#CCBB9D;font-weight:700;}
+.dom{flex:0 0 150px;font-size:13px;font-weight:700;padding-left:2px;padding-right:10px;}
+.brand{flex:0 0 118px;font-weight:700;}
+.ctry{flex:0 0 108px;color:#585958;}
+.nps{flex:0 0 56px;font-weight:700;font-size:17px;}
+.delta{flex:0 0 52px;color:#585958;}
+.n{flex:0 0 48px;color:#9F9A94;font-size:13px;}
+.bar{flex:1;display:flex;height:22px;margin-right:2px;}
+.seg{display:flex;align-items:center;justify-content:center;text-align:center;font-size:11.5px;overflow:hidden;}
+.seg.p{background:#373737;color:#FFFFFF;}
+.seg.s{background:#B8B8B8;color:#1E1E1E;}
+.seg.d{background:#DCD6D2;color:#1E1E1E;}
+
+/* ---- right quote rail ---- */
+.rail{position:absolute;left:956px;top:160px;width:300px;height:496px;background:#EEEEEE;padding:18px 18px 14px 18px;display:flex;flex-direction:column;}
+.railhd{font-size:17px;font-weight:700;line-height:1.3;flex:0 0 auto;}
+.railsub{font-size:14px;color:#585958;line-height:1.45;margin-top:10px;flex:0 0 auto;}
+.quotes{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding-top:8px;}
+.qcard{margin-top:16px;}
+.qtext{font-size:14px;font-style:italic;line-height:1.4;}
+.qattr{font-size:11.5px;color:#585958;margin-top:5px;}
+
+.source{position:absolute;left:24px;top:672px;width:900px;font-size:11.5px;color:#9F9A94;line-height:1.35;}
+.pg{position:absolute;right:24px;bottom:14px;font-size:11.5px;color:#9F9A94;}
+</style></head>
+<body>
+<div class="slide">
+  <div class="title">Group NPS of 61 is strong for B2B professional services, with the leading brands well clear of it</div>
+  <div class="subtitle">Net promoter score by brand, selected brands, LTM June</div>
+
+  <div class="legend">
+    <div class="sw p" style="left:214px;"></div><div class="kl" style="left:230px;">Promoters</div>
+    <div class="sw s" style="left:302px;"></div><div class="kl" style="left:318px;">Passives</div>
+    <div class="sw d" style="left:382px;"></div><div class="kl" style="left:398px;">Detractors</div>
+  </div>
+
+  <div class="exhibit">
+    <div class="hrow">
+      <div class="dom">Domain</div><div class="brand">Brand</div><div class="ctry">Country</div>
+      <div class="nps">NPS</div><div class="delta">YoY</div><div class="n">N</div>
+      <div class="bar" style="display:block;">Response distribution</div>
+    </div>
+    <div class="hrule"></div>
+
+    <div class="row"><div class="dom">Digital &amp; commerce</div><div class="brand">Meridian</div><div class="ctry">Denmark</div><div class="nps">88</div><div class="delta">+14</div><div class="n">24</div>
+      <div class="bar"><div class="seg p" style="width:90%;">90%</div><div class="seg s" style="width:8%;"></div><div class="seg d" style="width:2%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom"></div><div class="brand">Larkspur</div><div class="ctry">Sweden</div><div class="nps">72</div><div class="delta">+6</div><div class="n">81</div>
+      <div class="bar"><div class="seg p" style="width:77%;">77%</div><div class="seg s" style="width:18%;">18%</div><div class="seg d" style="width:5%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom">Brand &amp; marketing</div><div class="brand">Cobalt Works</div><div class="ctry">Norway</div><div class="nps">74</div><div class="delta">+3</div><div class="n">45</div>
+      <div class="bar"><div class="seg p" style="width:78%;">78%</div><div class="seg s" style="width:18%;">18%</div><div class="seg d" style="width:4%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom">Strategy &amp; change</div><div class="brand">Ashgrove</div><div class="ctry">Sweden</div><div class="nps">66</div><div class="delta">-7</div><div class="n">118</div>
+      <div class="bar"><div class="seg p" style="width:75%;">75%</div><div class="seg s" style="width:16%;">16%</div><div class="seg d" style="width:9%;">9%</div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom">Innovation &amp; UX</div><div class="brand">Tidewater</div><div class="ctry">Finland</div><div class="nps">73</div><div class="delta">+5</div><div class="n">58</div>
+      <div class="bar"><div class="seg p" style="width:76%;">76%</div><div class="seg s" style="width:21%;">21%</div><div class="seg d" style="width:3%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom"></div><div class="brand">Fennel Digital</div><div class="ctry">Netherlands</div><div class="nps">31</div><div class="delta">n/a</div><div class="n">96</div>
+      <div class="bar"><div class="seg p" style="width:41%;">41%</div><div class="seg s" style="width:49%;">49%</div><div class="seg d" style="width:10%;">10%</div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom">Tech &amp; product</div><div class="brand">Quarry Labs</div><div class="ctry">Germany</div><div class="nps">64</div><div class="delta">n/a</div><div class="n">33</div>
+      <div class="bar"><div class="seg p" style="width:73%;">73%</div><div class="seg s" style="width:18%;">18%</div><div class="seg d" style="width:9%;">9%</div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="dom"></div><div class="brand">Halcyon</div><div class="ctry">United Kingdom</div><div class="nps">55</div><div class="delta">-12</div><div class="n">52</div>
+      <div class="bar"><div class="seg p" style="width:67%;">67%</div><div class="seg s" style="width:21%;">21%</div><div class="seg d" style="width:12%;">12%</div></div></div>
+    <div class="hrule"></div>
+    <div class="row total"><div class="dom"></div><div class="brand">Group total</div><div class="ctry">All markets</div><div class="nps">61</div><div class="delta">+1</div><div class="n">1,140</div>
+      <div class="bar"><div class="seg p" style="width:69%;">69%</div><div class="seg s" style="width:23%;">23%</div><div class="seg d" style="width:8%;">8%</div></div></div>
+  </div>
+
+  <div class="rail">
+    <div class="railhd">What customers told us</div>
+    <div class="railsub">Every interviewed customer scored 9 or 10 on likelihood to recommend - an independent check on the survey among the largest accounts.</div>
+    <div class="quotes">
+      <div class="qcard pgroup">
+        <div class="qtext">"I would recommend them <b>without hesitation</b>, as long as we can keep the same team on our account."</div>
+        <div class="qattr">Customer interview, consumer goods manufacturer</div>
+      </div>
+      <div class="qcard pgroup">
+        <div class="qtext">"They are the one partner that <b>delivers what the strategy deck promised.</b>"</div>
+        <div class="qattr">Customer interview, retail banking</div>
+      </div>
+      <div class="qcard pgroup">
+        <div class="qtext">"They treat AI as a way to <b>change how we work, not just to cut cost.</b>"</div>
+        <div class="qattr">Customer interview, industrial equipment</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source">Source: Group customer survey (N = 1,140) and customer interviews. Illustrative data on fictional brands. Selected brands shown; group total covers all brands surveyed.</div>
+  <div class="pg">12</div>
+</div>
+</body></html>
