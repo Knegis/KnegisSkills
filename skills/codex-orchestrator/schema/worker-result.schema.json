@@ -1,0 +1,108 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "summary",
+    "confidence",
+    "files_changed",
+    "tests_run",
+    "tests_failed",
+    "blockers",
+    "out_of_scope_changes",
+    "integration_notes"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["complete", "partial", "blocked", "failed"]
+    },
+    "summary": { "type": "string" },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "change", "why"],
+        "properties": {
+          "path": { "type": "string" },
+          "change": {
+            "type": "string",
+            "enum": ["added", "modified", "deleted", "renamed"]
+          },
+          "why": { "type": "string" }
+        }
+      }
+    },
+    "tests_run": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "exit_code", "summary"],
+        "properties": {
+          "command": { "type": "string" },
+          "exit_code": { "type": "integer" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "tests_failed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "command", "error_excerpt"],
+        "properties": {
+          "name": { "type": "string" },
+          "command": { "type": "string" },
+          "error_excerpt": { "type": "string" }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "detail", "needs"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "missing_info",
+              "conflicting_requirement",
+              "wrong_premise",
+              "needs_dependency",
+              "sandbox_denied",
+              "test_infrastructure",
+              "other"
+            ]
+          },
+          "detail": { "type": "string" },
+          "needs": { "type": "string" }
+        }
+      }
+    },
+    "out_of_scope_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "reason"],
+        "properties": {
+          "path": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "integration_notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
