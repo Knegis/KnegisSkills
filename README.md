@@ -1,6 +1,6 @@
 # Knegis Skills
 
-A collection of skills developed by Axel and Theo at [Knegis](https://knegis.com).
+A collection of skills developed by Axel and Theo.
 
 ## Skills
 
