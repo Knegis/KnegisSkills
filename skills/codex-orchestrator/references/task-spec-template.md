@@ -22,7 +22,7 @@ do not compose them yourself.
   "run_dir": "<run_root>\\<repo-name>\\20260902-141530",
   "prompt_file": "<run_dir>\\prompt-worker-1-r1.md",
   "schema_file": "<skill dir>\\schema\\worker-result.schema.json",
-  "model": "gpt-5.6-terra",
+  "model": "gpt-6-sol",
   "reasoning_effort": "medium",
   "sandbox": "workspace-write",
   "add_dirs": [],

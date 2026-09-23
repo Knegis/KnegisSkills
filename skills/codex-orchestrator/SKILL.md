@@ -219,17 +219,15 @@ ecosystems.md. Workers never install.
 ## Phase 4 — pick a model per workstream
 
 Per workstream, not per run. See
-[references/model-policy.md](references/model-policy.md). Summary: `luna` for
-deterministic or mechanical transformation, `terra` for normal implementation
-after the architecture is fixed, `sol` where the worker must reason about
-correctness in a known problem class, `astra` (`gpt-6-astra`, effort `medium`)
-for the most difficult slice: the one whose difficulty a better brief cannot
-remove. Record the tier, the effort and **one sentence of why** in the plan
-before launching.
+[references/model-policy.md](references/model-policy.md). Summary:
+`gpt-6-luna` for deterministic or mechanical transformation, `gpt-6-sol` for
+normal implementation and known correctness problems, and `gpt-6-astra` for
+the most difficult slice: the one whose difficulty a better brief cannot
+remove. Record the model, effort and **one sentence of why** in the plan before
+launching.
 
-Do not put a whole run on `astra` or `sol` because the overall task matters.
-You already removed the architectural ambiguity; most workers should not need
-them.
+Do not put a whole run on `astra` because the overall task matters. You
+already removed the architectural ambiguity; most workers should use `sol`.
 
 ## Phase 5 — allocate slots, then write the briefs
 
