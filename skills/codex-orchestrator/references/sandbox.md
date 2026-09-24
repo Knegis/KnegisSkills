@@ -37,7 +37,7 @@ outcome here, and only then relax the offline rules for that machine.
 ```
 
 echoes the resolved `node codex.js exec …` command without launching. A real
-probe brief — create one file, add one comment line, run one formatter — costs
-about 13 000 tokens on `luna`/`low` and confirms the write scope, the header
-assertions (`approval: never`, model, sandbox, workdir) and the result-file
-path end to end.
+probe brief — create one file, add one comment line, run one formatter —
+confirms the write scope, the header assertions (`approval: never`, model,
+sandbox, workdir) and the result-file path end to end. Re-measure its token
+cost with GPT-6 before budgeting a run.
