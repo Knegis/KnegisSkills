@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Exemplar - T2 process stage rows with framework footer</title>
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:1280px;height:720px;font-family:Arial,sans-serif;background:#fff;}
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;background:#FFFFFF;color:#1E1E1E;}
+.title{position:absolute;left:24px;top:24px;width:1160px;font-size:34px;font-weight:700;line-height:1.16;}
+.subtitle{position:absolute;left:24px;top:112px;width:1160px;font-size:17px;font-style:italic;color:#595959;}
+
+/* ---- left column: who runs the process ---- */
+.left{position:absolute;left:24px;top:158px;width:280px;height:502px;display:flex;flex-direction:column;}
+.lefthd{font-size:15.5px;font-weight:700;line-height:1.25;flex:0 0 auto;}
+.group{margin-top:18px;flex:0 0 auto;}
+.grouphd{font-size:13px;font-weight:700;color:#373737;flex:0 0 auto;}
+.people{display:flex;gap:10px;margin-top:8px;}
+.person{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.avatar{width:46px;height:46px;border-radius:50%;background:#7F7F7F;color:#FFFFFF;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;}
+.pname{font-size:11px;font-weight:700;margin-top:6px;line-height:1.25;}
+.prole{font-size:10.5px;color:#595959;margin-top:2px;line-height:1.25;}
+
+/* ---- main panel: stage rows + framework footer ---- */
+.panel{position:absolute;left:324px;top:158px;width:932px;height:502px;background:#EEEEEE;padding:20px;display:flex;flex-direction:column;}
+.rows{flex:0 0 auto;display:flex;flex-direction:column;}
+.rowsep{height:1px;background:#BFBFBF;flex:0 0 auto;}
+.stagerow{height:84px;display:flex;align-items:center;gap:16px;}
+.numbox{flex:0 0 40px;width:40px;height:40px;background:#373737;color:#FFFFFF;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;}
+.stagename{flex:0 0 160px;}
+.stagename b{font-size:15px;font-weight:700;display:block;line-height:1.2;}
+.stagename .yr{font-size:11px;color:#8C8C8C;margin-top:3px;}
+.attr{flex:1;font-size:11.5px;line-height:1.32;padding-right:8px;}
+
+.fwrule{height:1.5px;background:#1E1E1E;flex:0 0 auto;margin-top:16px;}
+.fwrap{flex:1;display:flex;flex-direction:column;margin-top:10px;}
+.fwhead{font-size:14.5px;font-weight:700;text-align:center;flex:0 0 auto;}
+.pillars{display:flex;margin-top:10px;flex:1 1 auto;}
+.pillar{flex:1;text-align:center;padding:0 14px;}
+.pillar .ph{font-size:13px;font-weight:700;}
+.pillar .d{font-size:11.5px;color:#595959;margin-top:4px;line-height:1.3;}
+
+.source{position:absolute;left:24px;top:672px;width:1150px;font-size:11.5px;color:#8C8C8C;line-height:1.35;}
+</style></head>
+<body>
+<div class="slide">
+  <div class="title">Lumen Health runs every new-clinic opening through the same four-stage, 9-12 month playbook</div>
+  <div class="subtitle">How Lumen Health opens a clinic, from site selection to stabilisation</div>
+
+  <div class="left">
+    <div class="lefthd">Three groups run every opening, in the same roles each time</div>
+
+    <div class="group">
+      <div class="grouphd">Central playbook team</div>
+      <div class="people">
+        <div class="person"><div class="avatar">AK</div><div class="pname">Anna Kovac</div><div class="prole">Head of playbook</div></div>
+        <div class="person"><div class="avatar">DM</div><div class="pname">Daniel Moreau</div><div class="prole">Operations lead</div></div>
+        <div class="person"><div class="avatar">SR</div><div class="pname">Sara Reyes</div><div class="prole">Clinical standards lead</div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="grouphd">Regional operations directors</div>
+      <div class="people">
+        <div class="person"><div class="avatar">TN</div><div class="pname">Tomas Novak</div><div class="prole">France</div></div>
+        <div class="person"><div class="avatar">FL</div><div class="pname">Fatima Lambert</div><div class="prole">Benelux</div></div>
+        <div class="person"><div class="avatar">JW</div><div class="pname">James Wren</div><div class="prole">DACH</div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="grouphd">Local clinic opening leads</div>
+      <div class="people">
+        <div class="person"><div class="avatar">MK</div><div class="pname">Mia Kessler</div><div class="prole">Opening lead</div></div>
+        <div class="person"><div class="avatar">PO</div><div class="pname">Peter Owens</div><div class="prole">Opening lead</div></div>
+        <div class="person"><div class="avatar">LG</div><div class="pname">Lea Girard</div><div class="prole">Opening lead</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="rows">
+      <div class="stagerow">
+        <div class="numbox">1</div>
+        <div class="stagename"><b>Site selection</b><div class="yr">Month 0-2</div></div>
+        <div class="attr">Regional operations director scouts sites against catchment and footfall targets.</div>
+        <div class="attr">Sites are benchmarked against Lumen's twelve-point location scorecard.</div>
+        <div class="attr">Lease terms and competitor density are tested before an offer is made.</div>
+      </div>
+      <div class="rowsep"></div>
+      <div class="stagerow">
+        <div class="numbox">2</div>
+        <div class="stagename"><b>Build and fit-out</b><div class="yr">Month 2-7</div></div>
+        <div class="attr">One fit-out contractor runs every clinic to the same floor plan.</div>
+        <div class="attr">Clinical equipment is ordered from three approved suppliers only.</div>
+        <div class="attr">Fit-out is signed off against the same forty-point checklist every time.</div>
+      </div>
+      <div class="rowsep"></div>
+      <div class="stagerow">
+        <div class="numbox">3</div>
+        <div class="stagename"><b>Opening</b><div class="yr">Month 7-9</div></div>
+        <div class="attr">The local opening lead hires and trains staff four weeks before opening.</div>
+        <div class="attr">A soft launch runs two weeks ahead of the public opening date.</div>
+        <div class="attr">Opening readiness is reviewed jointly by clinical and operations leads.</div>
+      </div>
+      <div class="rowsep"></div>
+      <div class="stagerow">
+        <div class="numbox">4</div>
+        <div class="stagename"><b>Stabilisation</b><div class="yr">Month 9-12</div></div>
+        <div class="attr">The regional director reviews utilisation and staffing weekly for ninety days.</div>
+        <div class="attr">A clinic exits the playbook once utilisation passes 70% for four straight weeks.</div>
+        <div class="attr">An underperforming clinic gets a revised staffing or marketing plan, not a write-off.</div>
+      </div>
+    </div>
+
+    <div class="fwrule"></div>
+    <div class="fwrap">
+      <div class="fwhead">The 9-12 month playbook rests on three pillars</div>
+      <div class="pillars">
+        <div class="pillar pgroup"><div class="ph">Consistency</div><div class="d">The same scorecard, floor plan and checklist in every market.</div></div>
+        <div class="pillar pgroup"><div class="ph">Speed</div><div class="d">One contractor and three suppliers keep the build to twenty weeks.</div></div>
+        <div class="pillar pgroup"><div class="ph">Local judgement</div><div class="d">Regional directors can adapt staffing and marketing, never the clinical standard.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source">Source: Lumen Health new-clinic playbook, FY26 edition. Illustrative data on a fictional clinic operator.</div>
+</div>
+</body></html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Exemplar - T1 statement, one number given room</title>
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:1280px;height:720px;font-family:Arial,sans-serif;background:#fff;}
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;background:#FFFFFF;color:#1E1E1E;}
+.title{position:absolute;left:24px;top:24px;width:1160px;font-size:34px;font-weight:700;line-height:1.16;}
+.subtitle{position:absolute;left:24px;top:112px;width:1160px;font-size:17px;font-style:italic;color:#595959;}
+
+/* T1: one idea, given room. Sparse by design, not by accident. Three to five registers. */
+.hero{position:absolute;left:24px;top:214px;width:640px;}
+.hero .num{font-size:76.5px;font-weight:700;line-height:1;letter-spacing:normal;}
+.hero .unit{font-size:25.5px;font-weight:700;color:#595959;margin-top:6px;}
+.hero .read{font-size:17px;line-height:1.45;color:#1E1E1E;margin-top:22px;width:600px;}
+
+/* the one supporting register: last year against this year, as two quiet rows */
+.cmp{position:absolute;left:728px;top:226px;width:528px;}
+.cmp .row{display:flex;align-items:center;height:64px;}
+.cmp .lab{flex:0 0 150px;font-size:14px;color:#595959;}
+.cmp .track{flex:1;height:26px;background:#EEEEEE;position:relative;}
+.cmp .fill{position:absolute;left:0;top:0;height:26px;background:#B8B8B8;}
+.cmp .fill.now{background:#373737;}
+.cmp .val{flex:0 0 70px;text-align:right;font-size:17px;font-weight:700;}
+.cmp .rule{height:1px;background:#E4E4E4;}
+.cmp .note{font-size:13px;color:#595959;line-height:1.4;margin-top:16px;}
+
+.band{position:absolute;left:24px;top:560px;width:1232px;height:80px;background:#EEEEEE;display:flex;align-items:center;padding:0 22px;font-size:17px;line-height:1.4;}
+.source{position:absolute;left:24px;top:672px;width:1000px;font-size:11.5px;color:#8C8C8C;line-height:1.35;}
+</style></head>
+<body>
+<div class="slide">
+  <div class="title">Northwind Logistics delivered 94% of parcels on time in the third quarter, its best result since the network was redrawn</div>
+  <div class="subtitle">Share of parcels delivered within the promised window, Q3 2026, all regions</div>
+
+  <div class="hero">
+    <div class="num">94%</div>
+    <div class="unit">on time, Q3 2026</div>
+    <div class="read">Up from 87% a year earlier. The gain came from the two new regional hubs, which cut the average number of handovers per parcel from 3.4 to 2.6.</div>
+  </div>
+
+  <div class="cmp">
+    <div class="row"><div class="lab">Q3 2025</div><div class="track"><div class="fill" style="width:87%;"></div></div><div class="val">87%</div></div>
+    <div class="rule"></div>
+    <div class="row"><div class="lab">Q3 2026</div><div class="track"><div class="fill now" style="width:94%;"></div></div><div class="val">94%</div></div>
+    <div class="rule"></div>
+    <div class="row"><div class="lab">Target, FY27</div><div class="track"><div class="fill" style="width:96%;background:#9FB3C8;"></div></div><div class="val">96%</div></div>
+    <div class="note">Bars show the share delivered within the promised window. The FY27 target is the level at which the customer contract bonus applies.</div>
+  </div>
+
+  <div class="band"><b>Read for the reader:</b>&nbsp;the network change, not extra staffing, produced the improvement - and it leaves two points to the bonus threshold.</div>
+
+  <div class="source">Source: Northwind Logistics operations dashboard, Q3 2025 and Q3 2026. Illustrative data on a fictional company.</div>
+</div>
+</body></html>

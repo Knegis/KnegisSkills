@@ -1,0 +1,11 @@
+# python -m pip install -r requirements.txt
+# Python 3.9 or newer. Everything else the skill needs is in the standard library.
+python-pptx>=1.0.2
+playwright==1.58.0    # pinned: the extractor depends on exact browser layout behaviour
+
+# Optional, Linux/macOS-without-PowerPoint only: render_slides.py's LibreOffice fallback path
+# converts the deck to PDF then needs a PDF -> PNG step. If installed, pypdfium2 is used;
+# otherwise render_slides.py falls back to the `pdftoppm` CLI (poppler-utils) if that is on
+# PATH. Not required on Windows or on macOS with PowerPoint for Mac installed.
+# pypdfium2>=4.30
+# pillow>=10.0        (pypdfium2's PNG export needs it; pdftoppm from poppler is the other option)

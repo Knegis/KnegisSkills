@@ -1,0 +1,103 @@
+{
+  "skill_name": "deck-studio",
+  "evals": [
+    {
+      "id": 1,
+      "name": "internal-status-update-deck",
+      "prompt": "Build a 4-slide internal update deck for the COO on the customer-benchmark workstream at Northwind Advisory (a fictional consulting group). Slides: (1) Title - 'Customer benchmark status - April'; (2) Progress so far (74 peers benchmarked; growth analysis by vertical built; six deep-dives documented); (3) A 'What is done / What is next' split; (4) Closing slide. Show me the HTML mockups first; only build the .pptx when I say go. Save outputs to the folder I pointed you at.",
+      "expected_output": "HTML mockups shown via workroom.py --open before any .pptx exists; then a 4-slide .pptx built on the template the user chose for this deck (the plain built-in one if they said so), house font throughout with scripts/fontcheck.py printing CLEAN, near-monochrome palette, full-sentence titles on content slides, the progress slide as a deliberate format (not three bullets), footer and slide-number placeholders intact.",
+      "files": [],
+      "checks": [
+        "workroom.html exists and its mtime is earlier than the .pptx's mtime (HTML shown before the deck was built)",
+        "python scripts/typecheck.py exits 0 on every content-slide HTML",
+        "python-pptx opens the .pptx and reports 4 slides",
+        "python scripts/fontcheck.py exits 0 (CLEAN) on the built .pptx",
+        "no slide title run's text contains U+2014/U+2013 (em/en dash)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "client-pitch-intro-two-slides",
+      "prompt": "I need a 2-slide client pitch intro for Halcyon Data (a fictional Dutch data agency we are proposing to partner with). Slide 1 is a title slide - 'Northwind x Halcyon - extending our data capability in the Netherlands'. Slide 2 introduces what the partnership unlocks: combined team scale, Dutch market coverage, a shared data platform. HTML first, then .pptx on my go.",
+      "expected_output": "2-slide .pptx on the configured template, title layout for slide 1, slide 2 as a designed three-part visual with a synthesised so-what (not a bullet list), house font, palette, full declarative titles, typecheck 0 fail.",
+      "files": [],
+      "checks": [
+        "workroom.html exists and its mtime is earlier than the .pptx's mtime",
+        "python scripts/typecheck.py exits 0 on both slide HTMLs",
+        "python-pptx opens the .pptx and reports 2 slides",
+        "slide 1's slide_layout.name contains 'Title' (case-insensitive)",
+        "python scripts/fontcheck.py exits 0 (CLEAN) on the built .pptx"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "single-divider-slide",
+      "prompt": "Create a single section-divider slide titled 'Pipeline - where we are' that I can clone into an existing deck. Use the template's divider layout. Output a 1-slide .pptx.",
+      "expected_output": "A chrome slide (cover/divider/end carry no argument - built with `python scripts/chrome_slide.py --new --layout divider --title \"...\"`, NOT the HTML pipeline). On the plain template the 'divider' alias resolves to 'Section Header'; on a user's own template it resolves to that template's divider/section layout (chrome_slide.py prefers a white/light variant when several match).",
+      "files": [],
+      "checks": [
+        "python-pptx opens the .pptx and reports 1 slide",
+        "slide 1's slide_layout.name contains 'Section Header' (plain template) or the user's template's divider/section layout name",
+        "python scripts/fontcheck.py exits 0 (CLEAN) on the built .pptx",
+        "the title placeholder's text contains a hyphen '-' and no U+2014/U+2013 (em/en dash)"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "vague-brief-no-numbers",
+      "prompt": "Make me a slide about our Q3 results.",
+      "expected_output": "The brief fails the 00_intake.md question gate (no message, no evidence, no numbers). The agent does NOT invent figures. It either (a) asks a clarifying question about the actual Q3 numbers / message / audience before designing anything, or (b) if asked to sketch anyway, builds the slide with clearly marked ILLUSTRATIVE placeholder figures (e.g. an explicit 'illustrative' label/watermark, never presented as real Q3 data) and says so out loud. Either way it shows HTML first and does not silently produce a finished .pptx with fabricated numbers presented as real.",
+      "files": [],
+      "checks": [
+        "if no clarifying question was asked, every numeric figure on the slide HTML is co-located with the literal word 'illustrative' (case-insensitive) or an equivalent explicit placeholder marker",
+        "no .pptx exists unless the transcript shows an explicit go-ahead from the user after seeing HTML",
+        "if HTML was produced, workroom.html exists and predates any .pptx",
+        "python scripts/typecheck.py exits 0 on any slide HTML that was produced"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "native-stacked-column-chart",
+      "prompt": "Build one slide showing our revenue and EBITDA trend as a stacked column chart, FY23-FY26B: revenue 82/94/108/121 MEUR, EBITDA 14/17/19/22 MEUR. Label the EBITDA segment with its margin %. HTML first, then the .pptx on my go.",
+      "expected_output": "A .ppt-chart element (data-chart=\"stacked-column\") carrying the real data, per PIPELINE.md's native-chart convention - not shape-drawn bars. Only legal stacked-chart label positions are used (center / inside_end / inside_base - never outside_end or above, which corrupt the file). The built .pptx contains a real, editable PowerPoint chart (right-click -> Edit Data works), not a picture.",
+      "files": [],
+      "checks": [
+        "the slide HTML contains an element with class 'ppt-chart' and data-chart=\"stacked-column\"",
+        "every data-series entry's labelpos (if present) is one of center/inside_end/inside_base",
+        "python scripts/typecheck.py exits 0 on the slide HTML",
+        "python-pptx opens the .pptx and at least one shape on the slide has_chart == True",
+        "python scripts/fontcheck.py exits 0 (CLEAN) on the built .pptx"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "client-template-request",
+      "prompt": "Use the attached template for this deck - it's the client's own PowerPoint file. Build a 1-slide title slide on it: 'Meridian Partners - portfolio review'.",
+      "expected_output": "The agent runs `python scripts/use_template.py <client_template.pptx>` with `--deck <deck folder>` (never hand-edits house.json, which holds the plain built-in defaults per its own header comment) - this copies the file into template/, writes deck-studio.json with the derived palette/font/chrome/default-layout, and prints the effective palette. The agent designs and builds against that printed palette and the client template's own layouts.",
+      "files": [
+        "template/plain_template.pptx"
+      ],
+      "checks": [
+        "scripts/use_template.py was invoked (not a hand-edit of house.json) - house.json's mtime is unchanged",
+        "deck-studio.json exists, and its 'template' key points at a file under template/ copied from the attached file",
+        "python -c \"import sys; sys.path.insert(0,'scripts'); import config; print(config.TEMPLATE)\" resolves to that copied client template, not template/plain_template.pptx",
+        "the built .pptx's slide layout name is one that exists in the client template (cross-check via scripts/list_layouts.py on the client file)",
+        "the hex values used in the slide HTML's palette-role colours (canvas/text/dark_fill/secondary/etc.) match the palette use_template.py printed / wrote to deck-studio.json",
+        "<deck folder>/deck_template.json exists with kind 'custom'"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "new-deck-asks-for-template",
+      "prompt": "Make me a 3-slide deck on why our team should move weekly reporting to a shared dashboard. Audience: my manager, presented in our Monday meeting.",
+      "expected_output": "Before any slide HTML exists, the agent's batched intake message asks which PowerPoint template to use (the user's own .pptx/.potx, or the plain built-in one), names the template currently active (from `use_template.py --show`), and asks the density tier and where to keep the deck in the same message. After the answer it runs `use_template.py <file> --deck <folder>` or `use_template.py --plain --deck <folder>` before designing, and designs against the palette that printed.",
+      "files": [],
+      "checks": [
+        "the first agent message after the prompt asks about the template and offers both 'your own template' and 'the plain built-in one'",
+        "no slide HTML file's mtime is earlier than the user's answer to the template question",
+        "<deck folder>/deck_template.json exists",
+        "python scripts/typecheck.py exits 0 on every slide HTML"
+      ]
+    }
+  ]
+}
