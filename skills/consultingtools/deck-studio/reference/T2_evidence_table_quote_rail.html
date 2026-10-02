@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Exemplar - evidence-row table with a quote rail</title>
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:1280px;height:720px;font-family:Arial,sans-serif;background:#fff;}
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;background:#FFFFFF;color:#1E1E1E;}
+.title{position:absolute;left:24px;top:24px;width:1160px;font-size:34px;font-weight:700;line-height:1.16;}
+.subtitle{position:absolute;left:24px;top:112px;width:1160px;font-size:17px;font-style:italic;color:#595959;}
+
+/* ---- left exhibit: evidence-row table (one row per plant, grouped by region) ---- */
+.exhibit{position:absolute;left:24px;top:160px;width:896px;height:496px;display:flex;flex-direction:column;}
+.legend{position:absolute;left:236px;top:141px;width:310px;height:16px;font-size:11.5px;color:#595959;}
+.legend .sw{position:absolute;top:2px;width:11px;height:11px;}
+.legend .kl{position:absolute;top:0;line-height:16px;}
+.sw.p{background:#373737;} .sw.s{background:#B8B8B8;} .sw.d{background:#E3E6EA;}
+
+.hrow{display:flex;align-items:flex-end;font-size:14px;font-weight:700;padding-bottom:7px;}
+.hrule{height:1.5px;background:#1E1E1E;flex:0 0 auto;}
+.row{flex:1;display:flex;align-items:center;font-size:14px;}
+.rrule{height:1px;background:#E4E4E4;flex:0 0 auto;}
+.row.total{background:#9FB3C8;font-weight:700;}
+.reg{flex:0 0 150px;font-size:13px;font-weight:700;padding-left:2px;padding-right:10px;}
+.plant{flex:0 0 118px;font-weight:700;}
+.ctry{flex:0 0 100px;color:#595959;}
+.score{flex:0 0 56px;font-weight:700;font-size:17px;}
+.delta{flex:0 0 56px;color:#595959;}
+.n{flex:0 0 52px;color:#8C8C8C;font-size:13px;}
+.bar{flex:1;display:flex;height:22px;margin-right:2px;}
+.seg{display:flex;align-items:center;justify-content:center;text-align:center;font-size:11.5px;overflow:hidden;}
+.seg.p{background:#373737;color:#FFFFFF;}
+.seg.s{background:#B8B8B8;color:#1E1E1E;}
+.seg.d{background:#E3E6EA;color:#1E1E1E;}
+
+/* ---- right quote rail ---- */
+.rail{position:absolute;left:956px;top:160px;width:300px;height:496px;background:#EEEEEE;padding:18px 18px 14px 18px;display:flex;flex-direction:column;}
+.railhd{font-size:17px;font-weight:700;line-height:1.3;flex:0 0 auto;}
+.railsub{font-size:14px;color:#595959;line-height:1.45;margin-top:10px;flex:0 0 auto;}
+.quotes{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding-top:8px;}
+.qcard{margin-top:16px;}
+.qtext{font-size:14px;font-style:italic;line-height:1.4;}
+.qattr{font-size:11.5px;color:#595959;margin-top:5px;}
+
+.source{position:absolute;left:24px;top:672px;width:1000px;font-size:11.5px;color:#8C8C8C;line-height:1.35;}
+</style></head>
+<body>
+<div class="slide">
+  <div class="title">Plant quality scores average 82, but two of the seven sites sit below the 75 threshold that triggers a re-audit</div>
+  <div class="subtitle">Quality audit score by plant, Hallworth Industrial, rolling twelve months to September 2026</div>
+
+  <div class="legend">
+    <div class="sw p" style="left:0px;"></div><div class="kl" style="left:16px;">Passed</div>
+    <div class="sw s" style="left:86px;"></div><div class="kl" style="left:102px;">Minor finding</div>
+    <div class="sw d" style="left:206px;"></div><div class="kl" style="left:222px;">Major finding</div>
+  </div>
+
+  <div class="exhibit">
+    <div class="hrow"><div class="reg">Region</div><div class="plant">Plant</div><div class="ctry">Country</div><div class="score">Score</div><div class="delta">YoY</div><div class="n">Audits</div><div class="bar" style="height:auto;">Audit outcomes</div></div>
+    <div class="hrule"></div>
+
+    <div class="row"><div class="reg">UK and Ireland</div><div class="plant">Derby</div><div class="ctry">UK</div><div class="score">91</div><div class="delta">+4</div><div class="n">38</div>
+      <div class="bar"><div class="seg p" style="width:84%;">84%</div><div class="seg s" style="width:13%;">13%</div><div class="seg d" style="width:3%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="reg"></div><div class="plant">Cork</div><div class="ctry">Ireland</div><div class="score">86</div><div class="delta">+2</div><div class="n">31</div>
+      <div class="bar"><div class="seg p" style="width:77%;">77%</div><div class="seg s" style="width:19%;">19%</div><div class="seg d" style="width:4%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="reg">Central Europe</div><div class="plant">Linz</div><div class="ctry">Austria</div><div class="score">88</div><div class="delta">+6</div><div class="n">44</div>
+      <div class="bar"><div class="seg p" style="width:80%;">80%</div><div class="seg s" style="width:16%;">16%</div><div class="seg d" style="width:4%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="reg"></div><div class="plant">Brno</div><div class="ctry">Czechia</div><div class="score">71</div><div class="delta">-9</div><div class="n">36</div>
+      <div class="bar"><div class="seg p" style="width:58%;">58%</div><div class="seg s" style="width:28%;">28%</div><div class="seg d" style="width:14%;">14%</div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="reg">Iberia</div><div class="plant">Porto</div><div class="ctry">Portugal</div><div class="score">84</div><div class="delta">+1</div><div class="n">29</div>
+      <div class="bar"><div class="seg p" style="width:74%;">74%</div><div class="seg s" style="width:21%;">21%</div><div class="seg d" style="width:5%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="reg"></div><div class="plant">Zaragoza</div><div class="ctry">Spain</div><div class="score">69</div><div class="delta">n/a</div><div class="n">18</div>
+      <div class="bar"><div class="seg p" style="width:52%;">52%</div><div class="seg s" style="width:31%;">31%</div><div class="seg d" style="width:17%;">17%</div></div></div>
+    <div class="rrule"></div>
+    <div class="row"><div class="reg">North America</div><div class="plant">Kingston</div><div class="ctry">Canada</div><div class="score">83</div><div class="delta">+3</div><div class="n">26</div>
+      <div class="bar"><div class="seg p" style="width:73%;">73%</div><div class="seg s" style="width:22%;">22%</div><div class="seg d" style="width:5%;"></div></div></div>
+    <div class="rrule"></div>
+    <div class="row total"><div class="reg">Group</div><div class="plant">All plants</div><div class="ctry">Seven sites</div><div class="score">82</div><div class="delta">+1</div><div class="n">222</div>
+      <div class="bar"><div class="seg p" style="width:72%;">72%</div><div class="seg s" style="width:21%;">21%</div><div class="seg d" style="width:7%;">7%</div></div></div>
+  </div>
+
+  <div class="rail">
+    <div class="railhd">What the auditors noted</div>
+    <div class="railsub">Zaragoza joined the programme this year; Brno's fall follows the night-shift change in March. Both are scheduled for re-audit in Q4.</div>
+    <div class="quotes">
+      <div class="qcard pgroup">
+        <div class="qtext">"Derby's calibration records are the cleanest we have seen in the group. The routine is owned by the line, not by the quality office."</div>
+        <div class="qattr">Lead auditor, UK and Ireland, June 2026</div>
+      </div>
+      <div class="qcard pgroup">
+        <div class="qtext">"Brno's major findings all trace to one cause: the new shift pattern left the second inspection step uncovered between 22:00 and 06:00."</div>
+        <div class="qattr">Regional quality manager, Central Europe, August 2026</div>
+      </div>
+      <div class="qcard pgroup">
+        <div class="qtext">"A first-year score of 69 is normal for a plant coming onto the standard. The question is the trajectory, and Zaragoza has closed 11 of 14 findings already."</div>
+        <div class="qattr">Group head of quality, September 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source">Source: Hallworth Industrial quality audit programme, 222 audits in the twelve months to September 2026. Illustrative data on a fictional company.</div>
+</div>
+</body></html>

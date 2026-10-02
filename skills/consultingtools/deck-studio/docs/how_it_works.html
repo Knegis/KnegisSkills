@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>How deck-studio works - the full flow</title>
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:1280px;height:720px;font-family:Arial,sans-serif;background:#fff;}
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;background:#FFFFFF;color:#1E1E1E;}
+.title{position:absolute;left:24px;top:24px;width:1160px;font-size:34px;font-weight:700;line-height:1.16;}
+.subtitle{position:absolute;left:24px;top:112px;width:1160px;font-size:17px;font-style:italic;color:#595959;}
+
+/* phase headers */
+.ph{position:absolute;top:150px;height:24px;background:#373737;color:#FFFFFF;font-size:13px;font-weight:700;padding:0 10px;line-height:24px;}
+.ph.light{background:#E3E6EA;color:#1E1E1E;}
+
+/* three lanes: 182-334, 338-490, 494-646 */
+.lane{position:absolute;left:24px;width:1232px;height:152px;background:#F7F7F7;}
+.lane.mid{background:#EEEEEE;}
+.lanelab{position:absolute;left:34px;line-height:1;font-size:13px;font-weight:700;color:#595959;}
+
+/* nodes */
+.node{position:absolute;height:122px;background:#FFFFFF;padding:8px 10px;}
+.node.hi{background:#9FB3C8;}
+.node.dark{background:#373737;color:#FFFFFF;}
+.node .n{font-size:13px;font-weight:700;line-height:1.3;}
+.node .d{font-size:11.5px;color:#595959;line-height:1.3;margin-top:4px;}
+.node.hi .d{color:#373737;} .node.dark .d{color:#E3E6EA;}
+.node .c{font-size:11.5px;color:#595959;line-height:1.3;margin-top:4px;font-style:italic;}
+.node.dark .c{color:#E3E6EA;}
+
+/* connectors: horizontal / vertical divs + glyph arrowheads */
+.h{position:absolute;height:2px;background:#7F7F7F;}
+.v{position:absolute;width:2px;background:#7F7F7F;}
+.arr{position:absolute;font-size:13px;color:#7F7F7F;line-height:1;}
+.edge{position:absolute;font-size:11.5px;color:#595959;line-height:1.3;text-align:center;}
+
+.source{position:absolute;left:24px;top:672px;width:1160px;font-size:11.5px;color:#8C8C8C;line-height:1.35;}
+</style></head>
+<body>
+<div class="slide">
+  <div class="title">deck-studio works in two phases: HTML with you until it is right, then a mechanical translation onto your template</div>
+  <div class="subtitle">Who does what, and which script does it, from unzipping the skill to the finished .pptx</div>
+
+  <!-- phase headers -->
+  <div class="ph light" style="left:24px;width:236px;">Once per machine</div>
+  <div class="ph" style="left:262px;width:608px;">Phase 1 - design in HTML, with you (most of the time, several rounds)</div>
+  <div class="ph light" style="left:882px;width:374px;">Phase 2 - translate (fast, uneventful)</div>
+
+  <!-- lanes -->
+  <div class="lane" style="top:182px;"></div>
+  <div class="lane mid" style="top:338px;"></div>
+  <div class="lane" style="top:494px;"></div>
+  <div class="lanelab" style="top:188px;">You</div>
+  <div class="lanelab" style="top:344px;">The agent</div>
+  <div class="lanelab" style="top:500px;">The scripts and files</div>
+
+  <!-- ===== lane 1: you (top 212) ===== -->
+  <div class="node" style="left:34px;top:208px;width:216px;"><div class="n">Unzip anywhere, then tell your agent</div><div class="d">"Read SKILL.md and run python scripts/setup.py". No admin rights, safe to repeat. Have your company's or client's .pptx template to hand.</div></div>
+  <div class="node" style="left:262px;top:208px;width:184px;"><div class="n">Ask for a deck</div><div class="d">"Three slides on the Q3 results for the management team." Point at the files that hold the evidence.</div></div>
+  <div class="node" style="left:474px;top:208px;width:184px;"><div class="n">Answer two to four batched questions</div><div class="d">Which template (yours or plain), which tier, and only what else changes the slide. Routine choices are made for you.</div></div>
+  <div class="node hi" style="left:686px;top:208px;width:184px;"><div class="n">Review in the workroom, comment, repeat</div><div class="d">One browser page, every slide full size. Change the thinking here, where it is cheap. As many rounds as it takes.</div></div>
+  <div class="node" style="left:882px;top:208px;width:170px;"><div class="n">Say go</div><div class="d">Or say "skip the review" at the start if you want it built straight through.</div></div>
+  <div class="node" style="left:1080px;top:208px;width:176px;"><div class="n">Receive the .pptx</div><div class="d">Native shapes and charts on the deck's template, in its font. Later changes go into the HTML and are rebuilt; edits in PowerPoint are overwritten.</div></div>
+
+  <!-- ===== lane 2: agent (top 368) ===== -->
+  <div class="node" style="left:34px;top:364px;width:216px;"><div class="n">Reads SKILL.md</div><div class="d">About 7,000 tokens of docs on the default path: SKILL, 00_intake, STYLE, PIPELINE, the corpus manifest. Formats catalogue when needed.</div></div>
+  <div class="node" style="left:262px;top:364px;width:184px;"><div class="n">Settles the brief</div><div class="d">Message as one sentence per slide, audience, density tier, evidence with file and tab, constraints. Reads the files rather than asking what is knowable.</div></div>
+  <div class="node" style="left:474px;top:364px;width:184px;"><div class="n">Chooses the format from the message</div><div class="d">Looks at the reference exhibits at that tier for depth, never for the format. Title plus bullets is a defect.</div></div>
+  <div class="node" style="left:686px;top:364px;width:184px;"><div class="n">Authors constrained HTML, checks, renders, fixes</div><div class="d">1280 x 720 canvas, type in points, palette by role. Loops until typecheck is clean, then opens the workroom.</div></div>
+  <div class="node" style="left:882px;top:364px;width:170px;"><div class="n">Builds the deck</div><div class="d">Content slides through the pipeline; cover, divider and end slides from the template's own layouts.</div></div>
+  <div class="node" style="left:1080px;top:364px;width:176px;"><div class="n">Views the PowerPoint render next to the HTML</div><div class="d">Mandatory gate: the browser mockup is not evidence. Font audit must print CLEAN. Then hands over, versioned.</div></div>
+
+  <!-- ===== lane 3: scripts (top 524) ===== -->
+  <div class="node dark" style="left:34px;top:520px;width:216px;"><div class="n">setup.py, doctor.py, use_template.py</div><div class="d">Packages, a browser, the skill folder, a smoke build. use_template.py puts the deck on your template and derives its palette; --plain for the built-in one.</div></div>
+  <div class="node dark" style="left:262px;top:520px;width:184px;"><div class="n">house.json and reference/</div><div class="d">Built-in defaults: plain template, Arial, palette roles, default layout. Thirteen exhibits at T1, T2 and T3 on invented companies.</div></div>
+  <div class="node dark" style="left:474px;top:520px;width:184px;"><div class="n">typecheck.py, render_html.py</div><div class="d">Point sizes, colour roles, caps, dashes, canvas use, collisions, overflow, plus anything the translator cannot reproduce. Edge renders the PNG.</div></div>
+  <div class="node dark" style="left:686px;top:520px;width:184px;"><div class="n">workroom.py</div><div class="d">Regenerates workroom.html for the deck folder and opens it: every slide in its own frame, zoom, contact-sheet grid.</div></div>
+  <div class="node dark" style="left:882px;top:520px;width:170px;"><div class="n">build_deck.py, chrome_slide.py</div><div class="d">Browser geometry -> native shapes and charts -> every typeface patched -> packed and validated on the template.</div></div>
+  <div class="node dark" style="left:1080px;top:520px;width:176px;"><div class="n">render_slides.py, fontcheck.py</div><div class="d">PowerPoint renders the .pptx to PNGs (COM on Windows; Mac or LibreOffice elsewhere). fontcheck lists every typeface.</div></div>
+
+  <!-- ===== connectors ===== -->
+  <!-- you: ask -> questions -> review -> go -> receive -->
+  <div class="h" style="left:446px;top:269px;width:26px;"></div><div class="arr" style="left:462px;top:263px;">&#9654;</div>
+  <div class="h" style="left:658px;top:269px;width:26px;"></div><div class="arr" style="left:674px;top:263px;">&#9654;</div>
+  <div class="h" style="left:870px;top:269px;width:10px;"></div><div class="arr" style="left:870px;top:263px;">&#9654;</div>
+  <div class="h" style="left:1052px;top:269px;width:26px;"></div><div class="arr" style="left:1068px;top:263px;">&#9654;</div>
+  <!-- agent: left to right -->
+  <div class="h" style="left:446px;top:425px;width:26px;"></div><div class="arr" style="left:462px;top:419px;">&#9654;</div>
+  <div class="h" style="left:658px;top:425px;width:26px;"></div><div class="arr" style="left:674px;top:419px;">&#9654;</div>
+  <div class="h" style="left:870px;top:425px;width:10px;"></div><div class="arr" style="left:870px;top:419px;">&#9654;</div>
+  <div class="h" style="left:1052px;top:425px;width:26px;"></div><div class="arr" style="left:1068px;top:419px;">&#9654;</div>
+  <!-- loop arrow: review (you) back to author (agent): vertical between lanes at x 778 -->
+  <div class="v" style="left:777px;top:330px;height:34px;"></div><div class="arr" style="left:771px;top:330px;">&#9650;</div><div class="arr" style="left:771px;top:351px;">&#9660;</div>
+    <!-- you ask -> agent settles (x 354) -->
+  <div class="v" style="left:353px;top:330px;height:34px;"></div><div class="arr" style="left:347px;top:351px;">&#9660;</div>
+  <!-- questions up (x 566) -->
+  <div class="v" style="left:565px;top:330px;height:34px;"></div><div class="arr" style="left:559px;top:330px;">&#9650;</div>
+  <!-- go down (x 967) -->
+  <div class="v" style="left:966px;top:330px;height:34px;"></div><div class="arr" style="left:960px;top:351px;">&#9660;</div>
+  <!-- deck up to you (x 1168) -->
+  <div class="v" style="left:1167px;top:330px;height:34px;"></div><div class="arr" style="left:1161px;top:330px;">&#9650;</div>
+  <!-- agent <-> scripts: dashed-feel verticals at each phase-1/2 column -->
+  <div class="v" style="left:142px;top:486px;height:34px;"></div><div class="arr" style="left:136px;top:486px;">&#9650;</div>
+  <div class="v" style="left:353px;top:486px;height:34px;"></div><div class="arr" style="left:347px;top:486px;">&#9650;</div>
+  <div class="v" style="left:565px;top:486px;height:34px;"></div><div class="arr" style="left:559px;top:486px;">&#9650;</div><div class="arr" style="left:559px;top:507px;">&#9660;</div>
+  <div class="v" style="left:777px;top:486px;height:34px;"></div><div class="arr" style="left:771px;top:507px;">&#9660;</div>
+  <div class="v" style="left:966px;top:486px;height:34px;"></div><div class="arr" style="left:960px;top:507px;">&#9660;</div>
+  <div class="v" style="left:1167px;top:486px;height:34px;"></div><div class="arr" style="left:1161px;top:486px;">&#9650;</div>
+
+  <div class="source">The skill never hands over a .pptx you have not seen as HTML unless you asked it to skip the review. Confidential material: none ships; the reference exhibits are invented companies. Rendering on Windows with desktop PowerPoint is the verified path; macOS and Linux paths are implemented and awaiting a pilot.</div>
+</div>
+</body></html>
