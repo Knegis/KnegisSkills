@@ -4,6 +4,8 @@ Measured 2026-09-02 on Windows 11 Pro 10.0.26200, Codex CLI 0.148.0, Node
 v22.20.0, with `codex exec --sandbox workspace-write` and the worker's cwd set
 to its linked worktree. Re-measure after a Codex upgrade; the CLI's sandbox
 implementation changes.
+This version records the measurement environment; it is not a required or
+pinned CLI version. The harness uses the installed CLI on `PATH`.
 
 - It **can** write its own worktree freely.
 - It **cannot** write the primary checkout or a sibling worktree. Attempts fail
@@ -36,7 +38,8 @@ outcome here, and only then relax the offline rules for that machine.
 & "${CLAUDE_SKILL_DIR}/scripts/codex-worker.ps1" -SpecFile <spec> -DryRun
 ```
 
-echoes the resolved `node codex.js exec …` command without launching. A real
+checks the installed CLI and echoes the resolved native or npm launch command
+without starting a model worker. A real
 probe brief — create one file, add one comment line, run one formatter —
 confirms the write scope, the header assertions (`approval: never`, model,
 sandbox, workdir) and the result-file path end to end. Re-measure its token
