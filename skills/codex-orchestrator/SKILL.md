@@ -225,7 +225,7 @@ ecosystems.md. Workers never install.
 
 Per workstream, not per run. See
 [references/model-policy.md](references/model-policy.md). Summary:
-`gpt-6-luna` for deterministic or mechanical transformation, `gpt-6-sol` for
+`gpt-6-luna` for deterministic or mechanical transformation, `gpt-6.1-sol` for
 normal implementation and known correctness problems, and `gpt-6-astra` for
 the most difficult slice: the one whose difficulty a better brief cannot
 remove. Record the model, effort and **one sentence of why** in the plan before
