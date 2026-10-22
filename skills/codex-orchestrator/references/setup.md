@@ -1,5 +1,34 @@
 # One-time setup
 
+## Installed Codex CLI
+
+Install Codex CLI separately and make `codex` available on the launching
+shell's `PATH`. The harness uses that installation; it never pins a version,
+downloads a CLI, or updates one automatically.
+
+On Windows, `scripts/codex-cli.ps1` supports native `codex.exe` and npm's
+`codex.ps1` / `codex.cmd` launchers. Discovery follows `PATH` order. Native
+executables launch directly; npm installs launch their own `codex.js` with
+the adjacent `node.exe`, or Node from `PATH`. This preserves npm's environment
+setup without passing worker arguments through `cmd /c`. Other wrapper
+layouts produce an explicit error; discovery does not silently fall back to
+a different installation under `%APPDATA%`.
+
+Preflight and each worker run `--version` and `exec --help` with a 15-second
+timeout per probe, then check the flags used by the harness. These checks do
+not call a model or prove sandbox behavior. A missing flag or failed probe
+stops the run with a diagnostic. Worker discovery uses the spec's `env`
+overrides too, so a worker-specific `PATH` selects its installation.
+
+Preflight prints `codex_source`, `codex_filepath`, `codex_kind`, and
+`codex_version`. Workers also save these details in `cli-<slot>.json` using
+the fields `Source`, `FilePath`, `Kind`, `Version`, and `PrefixArgs`.
+Upgrading the installed CLI takes effect on the next launch; re-measure the
+sandbox assumptions in [sandbox.md](sandbox.md) after upgrades.
+
+The [official CLI reference](https://developers.openai.com/codex/cli/reference)
+describes the flags; the installed CLI's help determines local compatibility.
+
 ## 1. Persistent permissions — the one that actually blocks runs
 
 A skill's `allowed-tools` grant covers **only the turn the skill is invoked
@@ -153,6 +182,10 @@ Smoke-test the harness without spending a model call:
 & "$HOME\.claude\skills\codex-orchestrator\scripts\codex-worker.ps1" -SpecFile <spec> -DryRun
 ```
 
-`allocate` prints the slot descriptors without touching git. `-DryRun` echoes
-the fully resolved `node codex.js exec …` command and exits without launching
-anything.
+`allocate` prints the slot descriptors without touching git. `-DryRun` checks
+the installed CLI and echoes the resolved native or `node codex.js exec`
+command. It does not launch a model worker.
+
+For offline launcher regression checks (Windows PowerShell 5.1, Node and Git
+required), run `scripts/test-codex-cli.ps1`. It checks native/npm discovery,
+failure handling and worker dry runs in a disposable linked worktree.

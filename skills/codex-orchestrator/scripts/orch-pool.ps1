@@ -297,6 +297,13 @@ function Write-PathLine {
 
 # ------------------------------------------------------------------ preflight
 if ($Action -eq 'preflight') {
+    try {
+        . (Join-Path $PSScriptRoot 'codex-cli.ps1')
+        $cli = Get-CodexCli
+        Write-CodexCliInfo $cli
+    } catch {
+        Fail 30 $_.Exception.Message
+    }
     $gitDirPath = Assert-PrimaryCheckout -Code 30
 
     $branchNow = Invoke-Git @('-C', $RepoRoot, 'symbolic-ref', '--quiet', '--short', 'HEAD')

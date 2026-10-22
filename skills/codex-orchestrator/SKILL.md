@@ -90,7 +90,12 @@ worktree. Treat these as facts unless
 
 It exits non-zero rather than let a run start against a dirty tree, a detached
 HEAD, an in-progress merge/rebase/cherry-pick, or too little free space. It
-prints, and you read rather than assume:
+also resolves the installed Codex CLI from `PATH`, reports its path/version,
+and checks required `exec` flags using local help. No CLI version is pinned,
+downloaded, or updated. See [references/setup.md](references/setup.md) for
+supported launchers. Each worker repeats these checks and saves
+`cli-<slot>.json` alongside its logs.
+It prints, and you read rather than assume:
 
 - `invoke_branch`, `base_sha` — record `base_sha`; every worker is validated
   against the base it started from.
@@ -220,7 +225,7 @@ ecosystems.md. Workers never install.
 
 Per workstream, not per run. See
 [references/model-policy.md](references/model-policy.md). Summary:
-`gpt-6-luna` for deterministic or mechanical transformation, `gpt-6-sol` for
+`gpt-6-luna` for deterministic or mechanical transformation, `gpt-6.1-sol` for
 normal implementation and known correctness problems, and `gpt-6-astra` for
 the most difficult slice: the one whose difficulty a better brief cannot
 remove. Record the model, effort and **one sentence of why** in the plan before
@@ -289,7 +294,7 @@ Worker exit codes:
 | 10 | bad spec | your bug — fix the spec, relaunch |
 | 11 | not a linked worktree | **hard stop and report**; something is badly wrong |
 | 12 | branch or HEAD mismatch | re-reset the slot, relaunch |
-| 13 | `codex.js` not found | hard stop |
+| 13 | installed Codex CLI missing, unsupported, or incompatible | hard stop; read the discovery/probe error |
 | 14 | slot already locked | another run is live — `status`, do not relaunch |
 | 15 | run-header assertion failed | hard stop; the sandbox or approval policy did not take |
 | 20 | codex exited non-zero | read the stderr tail, then repair or take over |
