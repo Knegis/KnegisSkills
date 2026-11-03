@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "verdict", "summary", "findings", "requirement_coverage", "checks", "limitations", "questions"],
+  "properties": {
+    "status": {"type": "string", "enum": ["complete", "needs_input", "failed"]},
+    "verdict": {"type": "string", "enum": ["findings", "no_findings", "cannot_assess"]},
+    "summary": {"type": "string", "minLength": 1},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "requirement_coverage": {"type": "array", "items": {"$ref": "#/$defs/coverage"}},
+    "checks": {"type": "array", "items": {"$ref": "#/$defs/check"}},
+    "limitations": {"$ref": "#/$defs/strings"},
+    "questions": {"$ref": "#/$defs/strings"}
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "strings": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "title", "trigger", "impact", "evidence", "requirement_ids", "suggestion"],
+      "properties": {
+        "id": {"$ref": "#/$defs/text"},
+        "severity": {"type": "string", "enum": ["P1", "P2", "P3"]},
+        "title": {"$ref": "#/$defs/text"},
+        "trigger": {"$ref": "#/$defs/text"},
+        "impact": {"$ref": "#/$defs/text"},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+        "requirement_ids": {"$ref": "#/$defs/strings"},
+        "suggestion": {"$ref": "#/$defs/text"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "line_start", "line_end", "description"],
+      "properties": {
+        "path": {"$ref": "#/$defs/text"},
+        "line_start": {"type": "integer", "minimum": 1},
+        "line_end": {"type": "integer", "minimum": 1},
+        "description": {"$ref": "#/$defs/text"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "status", "evidence"],
+      "properties": {
+        "requirement_id": {"$ref": "#/$defs/text"},
+        "status": {"type": "string", "enum": ["met", "partial", "missing", "cannot_assess"]},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}}
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "outcome", "details"],
+      "properties": {
+        "command": {"$ref": "#/$defs/text"},
+        "outcome": {"type": "string", "enum": ["passed", "failed", "blocked", "not_run"]},
+        "details": {"$ref": "#/$defs/text"}
+      }
+    }
+  }
+}
