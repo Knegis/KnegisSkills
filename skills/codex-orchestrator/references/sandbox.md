@@ -1,9 +1,60 @@
+# Sandbox measurements
+
+## Observed on 2026-11-03: CLI 0.166.0
+
+On Windows 10.0.26300, both native sandbox checks and a real
+`gpt-6-luna`/`low` orchestrator worker permitted worktree writes and denied
+primary-checkout, sibling-worktree, Git-metadata and unapproved-directory writes.
+The approved directory was writable only when granted. The actual worker
+could not commit (Git index.lock creation was denied). Temporary storage was
+writable.
+
+Both paths permitted an outbound TCP connection to example.com:443 despite
+`sandbox_workspace_write.network_access=false`. The unsandboxed control was
+also reachable. This fails the network-isolation check: do not claim these
+workers are technically offline. Offline build/install instructions remain a
+workflow rule. No machine-wide firewall or sandbox settings were changed.
+
+The aggregate measurement is **failed**, with passing filesystem checks.
+See local `sandbox-evidence/latest.json` and its retained artifacts for the
+exact timestamp, command output, header, hashes and environment fingerprint.
+
+## Current measurement procedure
+
+Run `scripts/measure-sandbox.ps1` from the normal Windows user context. The
+native command's actual syntax is discovered from installed `sandbox --help`;
+CLI 0.166.0 uses `sandbox -- <command>` rather than `sandbox windows`.
+
+Read `latest.json` under the configured run root's `sandbox-evidence` directory,
+then its artifact directory: native command results, network control, actual
+worker logs/header, host-observed markers and Git hashes. Each check is passed,
+failed or inconclusive. Setup errors, missing output, nonzero command exits and
+failed network controls cannot establish a passing measurement. Temporary
+write access is recorded as an observation rather than an isolation guarantee.
+
+The direct Windows sandbox helper and a `codex exec` worker may use different
+execution paths. Their results remain separate. An outbound connection in either
+path fails that path's network check, even when the configuration requests
+networking off. Do not turn a TLS/certificate error into proof of enforcement.
+Remote tools and model-service connections are outside this command-network test.
+
+Freshness warnings are informational by user choice: launches continue after
+an upgrade or a failed/inconclusive measurement. Never claim isolation from a
+warning-only preflight or from CLI flag compatibility. The external allowlist
+adds explicit write exceptions; `%TEMP%` may remain shared and writable.
+
+Historical evidence below is retained for provenance, not as current proof.
+
+## Historical measurement (2026-09-02)
+
 # What the sandbox does and does not stop (measured)
 
 Measured 2026-09-02 on Windows 11 Pro 10.0.26200, Codex CLI 0.148.0, Node
 v22.20.0, with `codex exec --sandbox workspace-write` and the worker's cwd set
 to its linked worktree. Re-measure after a Codex upgrade; the CLI's sandbox
 implementation changes.
+This version records the measurement environment; it is not a required or
+pinned CLI version. The harness uses the installed CLI on `PATH`.
 
 - It **can** write its own worktree freely.
 - It **cannot** write the primary checkout or a sibling worktree. Attempts fail
@@ -36,7 +87,8 @@ outcome here, and only then relax the offline rules for that machine.
 & "${CLAUDE_SKILL_DIR}/scripts/codex-worker.ps1" -SpecFile <spec> -DryRun
 ```
 
-echoes the resolved `node codex.js exec …` command without launching. A real
+checks the installed CLI and echoes the resolved native or npm launch command
+without starting a model worker. A real
 probe brief — create one file, add one comment line, run one formatter —
 confirms the write scope, the header assertions (`approval: never`, model,
 sandbox, workdir) and the result-file path end to end. Re-measure its token

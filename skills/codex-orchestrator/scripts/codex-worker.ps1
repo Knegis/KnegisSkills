@@ -18,14 +18,15 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string] $SpecFile,
-    [switch] $DryRun
+    [switch] $DryRun,
+    [string] $ConfigFile = (Join-Path $HOME '.claude\codex-orchestrator.json')
 )
 
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 # ---------------------------------------------------------------- exit codes
-#  0  ok                       13 codex.js not found
+#  0  ok                       13 installed CLI missing or incompatible
 # 10  bad or missing spec      14 slot already locked
 # 11  not a linked worktree    15 run-header assertion failed
 # 12  branch or HEAD mismatch  20 codex exited nonzero
@@ -137,9 +138,15 @@ $effort          = Get-Required $spec 'reasoning_effort'
 $sandbox         = Get-Required $spec 'sandbox'
 $timeoutSeconds  = Get-Required $spec 'timeout_seconds'
 
+. (Join-Path $PSScriptRoot 'worker-policy.ps1')
+try { $policyConfig = Get-OrchestratorConfig $ConfigFile }
+catch { Stop-Worker -Code 33 -Reason ('config: ' + $_.Exception.Message) }
+try { $validatedDirs = @(Assert-WorkerPolicy $spec $policyConfig $ConfigFile) }
+catch { Stop-Worker -Code 10 -Reason $_.Exception.Message }
+
 $addDirs    = @()
 $ownedPaths = @()
-if ($spec.PSObject.Properties.Name -contains 'add_dirs')    { $addDirs    = @($spec.add_dirs) }
+$addDirs = @($validatedDirs)
 if ($spec.PSObject.Properties.Name -contains 'owned_paths') { $ownedPaths = @($spec.owned_paths) }
 
 if (-not (Test-Path -LiteralPath $runDir)) {
@@ -230,35 +237,30 @@ try {
     exit 14
 }
 
-# ------------------------------------------------------- 7. resolve node/cli
-# Start-Process with redirects uses CreateProcess, which cannot launch a .cmd
-# batch shim, and cmd.exe /c would re-parse and mangle -c key="value". Run
-# codex.js under node directly. Not codex.exe: codex.js is what wires the
-# bundled rg.exe and the Windows sandbox helper into the child environment.
-$codexJs = $null
-$cmdShim = Get-Command 'codex.cmd' -CommandType Application -ErrorAction SilentlyContinue
-if ($null -ne $cmdShim) {
-    $candidate = Join-Path (Split-Path $cmdShim.Source -Parent) 'node_modules\@openai\codex\bin\codex.js'
-    if (Test-Path -LiteralPath $candidate) { $codexJs = $candidate }
+# ------------------------------------------------------- 7. resolve CLI
+# Apply the worker environment before discovery so probes and execution select
+# the same installation, including a spec-provided PATH.
+if ($spec.PSObject.Properties.Name -contains 'env') {
+    foreach ($prop in @($spec.env.PSObject.Properties)) {
+        Set-Item -Path ("Env:" + $prop.Name) -Value ([string]$prop.Value)
+    }
 }
-if ($null -eq $codexJs) {
-    $candidate = Join-Path $env:APPDATA 'npm\node_modules\@openai\codex\bin\codex.js'
-    if (Test-Path -LiteralPath $candidate) { $codexJs = $candidate }
-}
-if ($null -eq $codexJs) {
-    Stop-Worker -Code 13 -Reason 'cannot locate codex.js'
-}
-
-$nodeCmd = Get-Command 'node.exe' -CommandType Application -ErrorAction SilentlyContinue
-if ($null -eq $nodeCmd) {
-    Stop-Worker -Code 13 -Reason 'node.exe not on PATH'
+try {
+    . (Join-Path $PSScriptRoot 'codex-cli.ps1')
+    $cli = Get-CodexCli
+    Write-CodexCliInfo $cli
+    Write-SandboxEvidenceWarning $cli $policyConfig
+    Write-Utf8NoBom -Path (Join-Path $runDir ('policy-' + $id + '.json')) -Text (@{ sandbox = 'workspace-write'; approval = 'never'; command_network = $false; add_dirs = $addDirs; reasoning_effort = $effort } | ConvertTo-Json -Depth 4)
+    Write-Utf8NoBom -Path (Join-Path $runDir ("cli-" + $id + ".json")) -Text ($cli | ConvertTo-Json -Depth 3)
+} catch {
+    Stop-Worker -Code 13 -Reason $_.Exception.Message
 }
 
-$argList = @()
-$argList += ('"' + $codexJs + '"')
+$argList = @($cli.PrefixArgs)
 $argList += 'exec'
 $argList += @('-C', ('"' + $worktree + '"'))
-$argList += @('--sandbox', $sandbox)
+$argList += @('--sandbox', 'workspace-write')
+$argList += Get-WorkerPolicyArgs
 $argList += @('-c', 'approval_policy="never"')
 $argList += @('-c', ('model_reasoning_effort="' + $effort + '"'))
 $argList += '--ephemeral'
@@ -271,16 +273,8 @@ foreach ($d in $addDirs) {
 }
 $argList += '-'
 
-# Enumerate the member objects, not .Name: with "env": {} the Name lookup on an
-# empty member collection throws under StrictMode.
-if ($spec.PSObject.Properties.Name -contains 'env') {
-    foreach ($prop in @($spec.env.PSObject.Properties)) {
-        Set-Item -Path ("Env:" + $prop.Name) -Value ([string]$prop.Value)
-    }
-}
-
 if ($DryRun) {
-    Set-Status ("worker={0} state=dryrun node={1} args={2}" -f $id, $nodeCmd.Source, ($argList -join ' '))
+    Set-Status ("worker={0} state=dryrun launcher={1} args={2}" -f $id, $cli.FilePath, ($argList -join ' '))
     Release-Lock
     exit 0
 }
@@ -293,7 +287,7 @@ if (Test-Path -LiteralPath $resultFile) {
 Set-Status ("worker={0} round={1} state=running model={2} effort={3} ts={4}" -f $id, $round, $model, $effort, (Get-Date -Format o))
 $started = Get-Date
 
-$proc = Start-Process -FilePath $nodeCmd.Source -ArgumentList $argList `
+$proc = Start-Process -FilePath $cli.FilePath -ArgumentList $argList `
                       -WorkingDirectory $worktree -NoNewWindow -PassThru `
                       -RedirectStandardInput $promptFile `
                       -RedirectStandardOutput $stdoutLog `

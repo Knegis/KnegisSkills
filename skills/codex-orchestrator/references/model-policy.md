@@ -4,13 +4,18 @@ Choose **per workstream**, not once per run, and record one sentence of
 justification in the plan before launching. Base the choice on the slice's
 difficulty, not its language or framework.
 
-The GPT-6 models available to this harness are:
+The current worker model choices (checked 2026-10-20) are:
 
 | model | use |
 | --- | --- |
 | `gpt-6-luna` | Focused, repeatable, mechanical work |
-| `gpt-6-sol` | Default for implementation and known correctness problems |
+| `gpt-6.1-sol` | Default for implementation and known correctness problems |
 | `gpt-6-astra` | The most difficult reasoning and design-sensitive slices |
+
+Here, `sol` means `gpt-6.1-sol`. These choices match the
+[official model catalog](https://developers.openai.com/api/docs/models) and
+the local Codex model cache checked on that date. Re-check both when updating
+the policy; an API listing alone does not establish Codex account access.
 
 The local Codex model cache lists `low`, `medium`, `high`, `xhigh` and `max`
 effort for all three, plus `ultra` for `sol` and `astra`. Do not put `ultra` in

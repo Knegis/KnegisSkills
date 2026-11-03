@@ -134,44 +134,10 @@ function Get-WorktreeTable {
 # Defaults here; ~/.claude/codex-orchestrator.json may override any key. An
 # invalid file is exit 33, never a silent fall back: a typo in max_workers must
 # not quietly restore the default ceiling.
-$Config = [ordered]@{
-    slot_prefix      = 'worker-'
-    max_workers      = 4
-    min_free_gb      = 10
-    run_root         = (Join-Path $HOME '.claude\orch-runs')
-    pool_root_suffix = '-worktrees'
-}
+. (Join-Path $PSScriptRoot 'worker-policy.ps1')
 $ConfigFile = Join-Path $HOME '.claude\codex-orchestrator.json'
-if (Test-Path -LiteralPath $ConfigFile) {
-    $user = $null
-    try {
-        $user = Get-Content -LiteralPath $ConfigFile -Raw -Encoding UTF8 | ConvertFrom-Json
-    } catch {
-        Fail 33 ("config is not valid JSON: " + $ConfigFile + " (" + $_.Exception.Message + ")")
-    }
-    if ($null -eq $user) { Fail 33 ("config is empty: " + $ConfigFile) }
-    foreach ($key in @($user.PSObject.Properties.Name)) {
-        if (-not $Config.Contains($key)) {
-            Fail 33 ("unknown config key '" + $key + "' in " + $ConfigFile)
-        }
-        $val = $user.$key
-        if (($key -eq 'max_workers') -or ($key -eq 'min_free_gb')) {
-            $isNum = ($val -is [int]) -or ($val -is [long]) -or ($val -is [double]) -or ($val -is [decimal])
-            if (-not $isNum) { Fail 33 ("config key '" + $key + "' must be a number in " + $ConfigFile) }
-            if ([math]::Floor($val) -ne $val) { Fail 33 ("config key '" + $key + "' must be an integer in " + $ConfigFile) }
-            if (($key -eq 'max_workers') -and ($val -lt 1)) { Fail 33 ("config key 'max_workers' must be >= 1 in " + $ConfigFile) }
-            if ($val -lt 0) { Fail 33 ("config key '" + $key + "' must be >= 0 in " + $ConfigFile) }
-            $Config[$key] = [int]$val
-        } else {
-            if (-not ($val -is [string])) { Fail 33 ("config key '" + $key + "' must be a string in " + $ConfigFile) }
-            if ([string]::IsNullOrWhiteSpace($val)) { Fail 33 ("config key '" + $key + "' must not be empty in " + $ConfigFile) }
-            $Config[$key] = [string]$val
-        }
-    }
-    if ($Config.run_root.StartsWith('~')) {
-        $Config.run_root = Join-Path $HOME ($Config.run_root.Substring(1).TrimStart('/', '\'))
-    }
-}
+try { $Config = Get-OrchestratorConfig $ConfigFile }
+catch { Fail 33 ('config: ' + $_.Exception.Message) }
 $SlotPattern = '^' + [regex]::Escape($Config.slot_prefix) + '([1-9][0-9]*)$'
 
 function Assert-Slot {
@@ -297,6 +263,14 @@ function Write-PathLine {
 
 # ------------------------------------------------------------------ preflight
 if ($Action -eq 'preflight') {
+    try {
+        . (Join-Path $PSScriptRoot 'codex-cli.ps1')
+        $cli = Get-CodexCli
+        Write-SandboxEvidenceWarning $cli $Config
+        Write-CodexCliInfo $cli
+    } catch {
+        Fail 30 $_.Exception.Message
+    }
     $gitDirPath = Assert-PrimaryCheckout -Code 30
 
     $branchNow = Invoke-Git @('-C', $RepoRoot, 'symbolic-ref', '--quiet', '--short', 'HEAD')

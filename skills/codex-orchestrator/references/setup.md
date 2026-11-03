@@ -1,5 +1,34 @@
 # One-time setup
 
+## Installed Codex CLI
+
+Install Codex CLI separately and make `codex` available on the launching
+shell's `PATH`. The harness uses that installation; it never pins a version,
+downloads a CLI, or updates one automatically.
+
+On Windows, `scripts/codex-cli.ps1` supports native `codex.exe` and npm's
+`codex.ps1` / `codex.cmd` launchers. Discovery follows `PATH` order. Native
+executables launch directly; npm installs launch their own `codex.js` with
+the adjacent `node.exe`, or Node from `PATH`. This preserves npm's environment
+setup without passing worker arguments through `cmd /c`. Other wrapper
+layouts produce an explicit error; discovery does not silently fall back to
+a different installation under `%APPDATA%`.
+
+Preflight and each worker run `--version` and `exec --help` with a 15-second
+timeout per probe, then check the flags used by the harness. These checks do
+not call a model or prove sandbox behavior. A missing flag or failed probe
+stops the run with a diagnostic. Worker discovery uses the spec's `env`
+overrides too, so a worker-specific `PATH` selects its installation.
+
+Preflight prints `codex_source`, `codex_filepath`, `codex_kind`, and
+`codex_version`. Workers also save these details in `cli-<slot>.json` using
+the fields `Source`, `FilePath`, `Kind`, `Version`, and `PrefixArgs`.
+Upgrading the installed CLI takes effect on the next launch; re-measure the
+sandbox assumptions in [sandbox.md](sandbox.md) after upgrades.
+
+The [official CLI reference](https://developers.openai.com/codex/cli/reference)
+describes the flags; the installed CLI's help determines local compatibility.
+
 ## 1. Persistent permissions — the one that actually blocks runs
 
 A skill's `allowed-tools` grant covers **only the turn the skill is invoked
@@ -69,6 +98,53 @@ the skill cannot overwrite it. Every key is optional:
 }
 ```
 
+### Approved extra writable directories
+
+The optional `approved_write_dirs_by_repo` key is an object mapping canonical
+primary repository paths to arrays of exact approved directory paths:
+
+```json
+{
+  "approved_write_dirs_by_repo": {
+    "C:\\work\\product": ["C:\\worker-cache\\product"]
+  }
+}
+```
+
+Default: `{}`. Approvals live only in the user's external orchestrator config;
+worker specs cannot add them. Directories and repository keys must exist.
+Requests are matched after canonicalization, case-insensitively. Descendants
+require their own exact entry. Junctions/symlinks, UNC/device paths, wildcards,
+and overlaps with primary checkouts, the pool, run storage, Git metadata or
+Claude/Codex configuration storage are rejected. Keep approvals narrow.
+Malformed config is exit 33; invalid worker requests are exit 10. The optional
+worker `-ConfigFile` parameter selects a trusted external config (used by the
+disposable measurement fixtures); it is not a spec field.
+
+The launcher resets inherited `sandbox_workspace_write.writable_roots` before
+passing validated `--add-dir` requests, and explicitly sets command networking
+off. It does not change your Codex config. Sandbox controls apply to executed
+commands; they do not establish isolation for remote tools/connectors.
+
+### Sandbox evidence
+
+Run `scripts/measure-sandbox.ps1` explicitly. It uses the installed CLI,
+disposable fixtures, native sandbox commands, and one `gpt-6-luna`/`low` worker
+with a 120-second limit. `-Model` is an explicit override; no fallback occurs.
+`-SkipWorker` makes no model calls but leaves worker verification inconclusive.
+Measurement returns 0 only when all required checks pass; otherwise 1.
+
+Artifacts live under `<run_root>/sandbox-evidence/<timestamp-id>`; disposable
+repositories live under `~/codex-sandbox-probes/<timestamp-id>` and are retained
+for inspection. `latest.json` references the latest result, including failed
+attempts. CLI identity/version, OS, Codex config hash, allowlist and relevant
+harness hashes bind freshness. The installed CLI may auto-register trust
+bookmarks for these disposable repositories in its user config. Only those
+exact generated bookmark tables are excluded from the config fingerprint;
+real project trust rules and other settings remain included. The measurement
+does not rewrite your Codex config. Preflight and workers **warn and continue** on
+missing, stale, failed or inconclusive evidence. No automatic probes run.
+
 - `slot_prefix` + an index from 1 to `max_workers` is the only slot name the
   scripts accept (`worker-1`, `worker-2`, …). `max_workers` is the hard
   ceiling; preflight's `recommended_workers` never exceeds it.
@@ -95,7 +171,7 @@ away.
 ## 4. Seed the pool slots (per repo, once)
 
 A slot is created empty by the first `reset`. Before a worker in it can build
-anything it needs the ecosystem's dependency store, and a worker has no network,
+anything it needs the ecosystem's dependency store, and workers must use offline modes,
 so you do this yourself, unsandboxed, in the slot:
 
 1. Run the install for each detected ecosystem (the "Bootstrap" line in
@@ -153,6 +229,10 @@ Smoke-test the harness without spending a model call:
 & "$HOME\.claude\skills\codex-orchestrator\scripts\codex-worker.ps1" -SpecFile <spec> -DryRun
 ```
 
-`allocate` prints the slot descriptors without touching git. `-DryRun` echoes
-the fully resolved `node codex.js exec …` command and exits without launching
-anything.
+`allocate` prints the slot descriptors without touching git. `-DryRun` checks
+the installed CLI and echoes the resolved native or `node codex.js exec`
+command. It does not launch a model worker.
+
+For offline launcher regression checks (Windows PowerShell 5.1, Node and Git
+required), run `scripts/test-codex-cli.ps1`. It checks native/npm discovery,
+failure handling and worker dry runs in a disposable linked worktree.
