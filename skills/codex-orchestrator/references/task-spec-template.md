@@ -43,9 +43,16 @@ Notes that matter:
   for your worker count. **Never** a variable that file lists as
   fingerprint-changing; that forces the full rebuild the warm pool exists to
   avoid.
-- `add_dirs` should normally be empty. Reads outside the worktree already work;
-  granting writes widens the blast radius, and granting the gitdir would let the
-  worker commit.
+- `sandbox` must be exactly `workspace-write`; accepted effort values are
+  `low`, `medium`, `high`, `xhigh`, and `max`. `ultra` is rejected (exit 10).
+- `add_dirs` must be omitted or a JSON array of existing absolute local
+  directories. Each entry must exactly match the primary repository's external
+  allowlist. Empty is the default. No wildcards, network/device paths, reparse
+  points, or grants overlapping protected checkout/pool/run/config storage.
+  Parent approval does not approve child requests. Invalid specs exit 10
+  before creating run files, locking a slot or probing the CLI.
+- `env` cannot redirect `CODEX_HOME`, home/config directories or security
+  controls. Model identifiers must be single tokens, not CLI arguments.
 - `timeout_seconds` is a wall clock. On expiry the process tree is killed and
   the partial patch is still captured.
 - `base_sha` is the base **this** worker starts from. After a foundation or
@@ -100,8 +107,9 @@ orchestrator re-runs that after merge.>
 
 # Worker rules
 
-- You are in an isolated git worktree; your writes are confined to it by an OS
-  sandbox. Writes elsewhere fail with "Access to the path ... is denied".
+- You are in a sandboxed git worktree. Write only your owned paths and any
+  explicitly granted directories; do not use shared temporary storage for inputs.
+  Treat network access as prohibited even if an OS backend permits it.
 - You must NOT run a mutating git command: not `commit`, `add`, `checkout`,
   `switch`, `restore`, `reset`, `stash`, `merge`, `rebase`, `cherry-pick`,
   `branch`, `tag`, `worktree`, `clean`, `push`, `fetch`, or `remote`. Read-only

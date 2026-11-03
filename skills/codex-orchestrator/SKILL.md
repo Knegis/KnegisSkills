@@ -69,18 +69,25 @@ A bootstrap change lands as its own commit on the invoke branch and advances
 
 ## Worker environment
 
-A worker runs `codex exec --sandbox workspace-write` with its cwd set to its
-worktree. Treat these as facts unless
-[references/sandbox.md](references/sandbox.md) records a measured exception:
+A worker runs `codex exec --sandbox workspace-write`, approval `never`,
+with its cwd set to its linked worktree. The runner rejects other sandbox
+values and `ultra` effort before it creates artifacts or launches a process.
+It clears inherited extra writable roots and explicitly requests command
+networking off. These are enforced launch settings; actual OS behavior must
+be measured, not inferred from the flags.
 
-- It can write its own worktree and nothing else. Writes elsewhere fail
-  non-fatally and the run continues.
-- It cannot commit: a linked worktree's gitdir lives under the primary repo's
-  `.git`, outside the writable roots. "Claude owns the commit" is OS-enforced.
-- **Workers have no network unless the harness has explicitly proven
-  otherwise.** Anything that installs, fetches or resolves is bootstrap, done
-  by you; the worker uses the ecosystem's offline mode.
-- `%TEMP%` is shared by every worker; stage nothing there.
+- The worktree is writable; Git metadata and primary/sibling checkout writes
+  are expected to be denied. Do not grant extra access to make a commit work.
+- `add_dirs` may request only exact directories in the primary repository's
+  external allowlist. Protected storage cannot be approved. Read access needs
+  no extra write grant. See [setup.md](references/setup.md).
+- Networking and temporary-directory access depend on the measured backend.
+  Use offline build/install modes regardless; a network failure alone is not
+  proof of network isolation. Never stage shared worker inputs in `%TEMP%`.
+- Preflight and workers warn and continue if measurement evidence is missing,
+  stale, failed or inconclusive. They never launch a measurement automatically.
+  Run `scripts/measure-sandbox.ps1` explicitly after CLI or policy changes and
+  read [sandbox.md](references/sandbox.md) before claiming isolation.
 
 ## Phase 0 — preflight, and refuse early
 
@@ -209,7 +216,7 @@ are reusable across rounds: once the foundation is committed and merged,
 - **A prepend-newest-first changelog or engineering log.** No worker writes it.
   You write one entry after integration.
 - **Dependency manifests and lockfiles.** Workers may not touch them (they
-  cannot fetch anyway). A lockfile conflict is never hand-merged: take the base
+  must not fetch). A lockfile conflict is never hand-merged: take the base
   version and regenerate once, after all merges, with the ecosystem's
   non-resolving command from ecosystems.md.
 - **Shared claim or registry files.** Serialise them into one workstream.
@@ -291,9 +298,10 @@ Worker exit codes:
 | code | meaning | what you do |
 | --- | --- | --- |
 | 0 | ran, result usable | review the patch |
-| 10 | bad spec | your bug — fix the spec, relaunch |
+| 10 | bad spec or prohibited worker policy | your bug — fix the spec, relaunch |
 | 11 | not a linked worktree | **hard stop and report**; something is badly wrong |
 | 12 | branch or HEAD mismatch | re-reset the slot, relaunch |
+| 33 | malformed external orchestrator config | fix the config; no worker launched |
 | 13 | installed Codex CLI missing, unsupported, or incompatible | hard stop; read the discovery/probe error |
 | 14 | slot already locked | another run is live — `status`, do not relaunch |
 | 15 | run-header assertion failed | hard stop; the sandbox or approval policy did not take |

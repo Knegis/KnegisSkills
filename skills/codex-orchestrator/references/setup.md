@@ -98,6 +98,53 @@ the skill cannot overwrite it. Every key is optional:
 }
 ```
 
+### Approved extra writable directories
+
+The optional `approved_write_dirs_by_repo` key is an object mapping canonical
+primary repository paths to arrays of exact approved directory paths:
+
+```json
+{
+  "approved_write_dirs_by_repo": {
+    "C:\\work\\product": ["C:\\worker-cache\\product"]
+  }
+}
+```
+
+Default: `{}`. Approvals live only in the user's external orchestrator config;
+worker specs cannot add them. Directories and repository keys must exist.
+Requests are matched after canonicalization, case-insensitively. Descendants
+require their own exact entry. Junctions/symlinks, UNC/device paths, wildcards,
+and overlaps with primary checkouts, the pool, run storage, Git metadata or
+Claude/Codex configuration storage are rejected. Keep approvals narrow.
+Malformed config is exit 33; invalid worker requests are exit 10. The optional
+worker `-ConfigFile` parameter selects a trusted external config (used by the
+disposable measurement fixtures); it is not a spec field.
+
+The launcher resets inherited `sandbox_workspace_write.writable_roots` before
+passing validated `--add-dir` requests, and explicitly sets command networking
+off. It does not change your Codex config. Sandbox controls apply to executed
+commands; they do not establish isolation for remote tools/connectors.
+
+### Sandbox evidence
+
+Run `scripts/measure-sandbox.ps1` explicitly. It uses the installed CLI,
+disposable fixtures, native sandbox commands, and one `gpt-6-luna`/`low` worker
+with a 120-second limit. `-Model` is an explicit override; no fallback occurs.
+`-SkipWorker` makes no model calls but leaves worker verification inconclusive.
+Measurement returns 0 only when all required checks pass; otherwise 1.
+
+Artifacts live under `<run_root>/sandbox-evidence/<timestamp-id>`; disposable
+repositories live under `~/codex-sandbox-probes/<timestamp-id>` and are retained
+for inspection. `latest.json` references the latest result, including failed
+attempts. CLI identity/version, OS, Codex config hash, allowlist and relevant
+harness hashes bind freshness. The installed CLI may auto-register trust
+bookmarks for these disposable repositories in its user config. Only those
+exact generated bookmark tables are excluded from the config fingerprint;
+real project trust rules and other settings remain included. The measurement
+does not rewrite your Codex config. Preflight and workers **warn and continue** on
+missing, stale, failed or inconclusive evidence. No automatic probes run.
+
 - `slot_prefix` + an index from 1 to `max_workers` is the only slot name the
   scripts accept (`worker-1`, `worker-2`, …). `max_workers` is the hard
   ceiling; preflight's `recommended_workers` never exceeds it.
@@ -124,7 +171,7 @@ away.
 ## 4. Seed the pool slots (per repo, once)
 
 A slot is created empty by the first `reset`. Before a worker in it can build
-anything it needs the ecosystem's dependency store, and a worker has no network,
+anything it needs the ecosystem's dependency store, and workers must use offline modes,
 so you do this yourself, unsandboxed, in the slot:
 
 1. Run the install for each detected ecosystem (the "Bootstrap" line in

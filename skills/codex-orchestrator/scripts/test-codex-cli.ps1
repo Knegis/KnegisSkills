@@ -131,6 +131,10 @@ public class CodexLauncherFixture {
         $spec | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath $specFile -Encoding ASCII
         $workerOutput = & $shell -NoProfile -ExecutionPolicy Bypass -File $workerScript -SpecFile $specFile -DryRun
         Assert-True ($LASTEXITCODE -eq 0) ('Worker dry run failed: ' + ($workerOutput -join "`n"))
+        $commandText = $workerOutput -join "`n"
+        Assert-True ($commandText.Contains('--sandbox workspace-write')) 'Worker sandbox flag is not fixed'
+        Assert-True ($commandText.Contains('sandbox_workspace_write.writable_roots=[]')) 'Worker did not clear inherited write grants'
+        Assert-True ($commandText.Contains('sandbox_workspace_write.network_access=false')) 'Worker did not explicitly request network off'
         $metadata = Get-Content -LiteralPath (Join-Path $scratch 'cli-worker-1.json') -Raw | ConvertFrom-Json
         $expectedKind = $kind
         if ($kind -eq 'npm') { $expectedKind = $installed.Kind }

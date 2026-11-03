@@ -18,7 +18,8 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string] $SpecFile,
-    [switch] $DryRun
+    [switch] $DryRun,
+    [string] $ConfigFile = (Join-Path $HOME '.claude\codex-orchestrator.json')
 )
 
 Set-StrictMode -Version 2.0
@@ -137,9 +138,15 @@ $effort          = Get-Required $spec 'reasoning_effort'
 $sandbox         = Get-Required $spec 'sandbox'
 $timeoutSeconds  = Get-Required $spec 'timeout_seconds'
 
+. (Join-Path $PSScriptRoot 'worker-policy.ps1')
+try { $policyConfig = Get-OrchestratorConfig $ConfigFile }
+catch { Stop-Worker -Code 33 -Reason ('config: ' + $_.Exception.Message) }
+try { $validatedDirs = @(Assert-WorkerPolicy $spec $policyConfig $ConfigFile) }
+catch { Stop-Worker -Code 10 -Reason $_.Exception.Message }
+
 $addDirs    = @()
 $ownedPaths = @()
-if ($spec.PSObject.Properties.Name -contains 'add_dirs')    { $addDirs    = @($spec.add_dirs) }
+$addDirs = @($validatedDirs)
 if ($spec.PSObject.Properties.Name -contains 'owned_paths') { $ownedPaths = @($spec.owned_paths) }
 
 if (-not (Test-Path -LiteralPath $runDir)) {
@@ -242,6 +249,8 @@ try {
     . (Join-Path $PSScriptRoot 'codex-cli.ps1')
     $cli = Get-CodexCli
     Write-CodexCliInfo $cli
+    Write-SandboxEvidenceWarning $cli $policyConfig
+    Write-Utf8NoBom -Path (Join-Path $runDir ('policy-' + $id + '.json')) -Text (@{ sandbox = 'workspace-write'; approval = 'never'; command_network = $false; add_dirs = $addDirs; reasoning_effort = $effort } | ConvertTo-Json -Depth 4)
     Write-Utf8NoBom -Path (Join-Path $runDir ("cli-" + $id + ".json")) -Text ($cli | ConvertTo-Json -Depth 3)
 } catch {
     Stop-Worker -Code 13 -Reason $_.Exception.Message
@@ -250,7 +259,8 @@ try {
 $argList = @($cli.PrefixArgs)
 $argList += 'exec'
 $argList += @('-C', ('"' + $worktree + '"'))
-$argList += @('--sandbox', $sandbox)
+$argList += @('--sandbox', 'workspace-write')
+$argList += Get-WorkerPolicyArgs
 $argList += @('-c', 'approval_policy="never"')
 $argList += @('-c', ('model_reasoning_effort="' + $effort + '"'))
 $argList += '--ephemeral'
